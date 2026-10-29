@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TYPES · 电脑新手打字练习</title>
+<script>
+try {
+  var saved = JSON.parse(localStorage.getItem('types.v1.settings') || '{}');
+  if (saved.theme === 'dark') document.documentElement.dataset.theme = 'dark';
+} catch (e) {}
+</script>
+<style>
+  :root {
+    --bg: #f3f5f8;
+    --panel: #ffffff;
+    --panel-2: #f8fafc;
+    --text: #17202b;
+    --muted: #6b7684;
+    --line: #e3e8ef;
+    --accent: #2f6df6;
+    --accent-soft: #e8f0fe;
+    --correct: #17934f;
+    --error: #d93b3b;
+    --error-soft: #fdecec;
+    --current-bg: #e8f0fe;
+    --key-bg: #ffffff;
+    --key-border: #d7dde6;
+    --key-label: #33404f;
+    --key-shadow: 0 1px 0 #d7dde6;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .04);
+  }
+
+  [data-theme="dark"] {
+    --bg: #0e131b;
+    --panel: #161d27;
+    --panel-2: #121821;
+    --text: #e8edf4;
+    --muted: #94a3b8;
+    --line: #26313f;
+    --accent: #5b8def;
+    --accent-soft: #1c2f4f;
+    --correct: #42d392;
+    --error: #ff6b6b;
+    --error-soft: #3a1b1e;
+    --current-bg: #20334e;
+    --key-bg: #1b2430;
+    --key-border: #334154;
+    --key-label: #c9d4e2;
+    --key-shadow: 0 1px 0 #0a0f15;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app { height: 100%; min-height: 100%; display: flex; flex-direction: column; }
+
+  .topbar {
+    flex: 0 0 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand { display: flex; align-items: center; gap: 12px; }
+
+  .logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 800;
+  }
+
+  .brand h1 { margin: 0; font-size: 16px; letter-spacing: 3px; }
+  .brand p { margin: 0; font-size: 12px; color: var(--muted); }
+
+  .top-actions { display: flex; align-items: center; gap: 8px; }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+
+  .icon-btn:hover { color: var(--text); border-color: var(--key-border); background: var(--panel-2); }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .sidebar {
+    height: 100%;
+    overflow-y: auto;
+    padding: 18px 14px 22px;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .sidebar nav { display: flex; flex-direction: column; gap: 18px; }
+
+  .nav-section { display: flex; flex-direction: column; gap: 2px; }
+
+  .section-title {
+    margin: 0 0 6px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: .5px;
+  }
+
+  .nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text);
+    font-size: 13.5px;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .nav-item:hover { background: var(--panel-2); }
+
+  .nav-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+  .nav-best {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+
+  .nav-item.active .nav-best { background: var(--panel); color: var(--accent); border-color: transparent; }
+  .nav-best:empty { display: none; }
+
+  .history { display: flex; flex-direction: column; gap: 6px; }
+
+  .history-item {
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--panel-2);
+  }
+
+  .h-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .h-meta { font-size: 11.5px; color: var(--muted); }
+  .history-empty { font-size: 12px; color: var(--muted); padding: 2px 8px; line-height: 1.6; }
+
+  .main {
+    height: 100%;
+    min-height: 0;
+    padding: 20px 26px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 1160px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .stats-bar { flex: 0 0 auto; padding: 14px 20px 12px; }
+
+  .stats { display: flex; }
+
+  .stat { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .stat + .stat { border-left: 1px solid var(--line); padding-left: 18px; }
+
+  .stat-label { font-size: 12px; color: var(--muted); }
+
+  .stat-value { display: flex; align-items: baseline; gap: 4px; }
+
+  .stat-value b { font-size: 24px; font-weight: 700; line-height: 1.25; }
+  .stat-value i { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+
+  .progress {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width .18s ease;
+  }
+
+  .progress-text { font-size: 12px; color: var(--muted); min-width: 38px; text-align: right; }
+
+  .text-panel {
+    flex: 1 1 auto;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-head {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .panel-head h2 { margin: 0 0 3px; font-size: 15px; }
+  .panel-head p { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .ghost-btn {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 13px;
+    font-family: inherit;
+    padding: 7px 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+  }
+
+  .ghost-btn:hover { color: var(--text); border-color: var(--key-border); }
+
+  .primary-btn {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+
+  .primary-btn:hover { filter: brightness(1.06); }
+
+  .text-area {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 22px 22px;
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 21px;
+    line-height: 2;
+    letter-spacing: .4px;
+    color: var(--muted);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    user-select: none;
+    outline: none;
+  }
+
+  .text-area::-webkit-scrollbar { width: 8px; }
+  .text-area::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+
+  .char.correct { color: var(--correct); }
+  .char.nl { font-size: .72em; opacity: .75; }
+  .char.correct.nl { color: var(--correct); opacity: 1; }
+
+  .char.current {
+    color: var(--text);
+    background: var(--current-bg);
+    border-radius: 4px;
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+
+  .char.wrong {
+    color: var(--error);
+    background: var(--error-soft);
+    border-radius: 4px;
+    box-shadow: inset 0 -2px 0 var(--error);
+    animation: flash .25s ease;
+  }
+
+  @keyframes flash {
+    0% { background: transparent; }
+    100% { background: var(--error-soft); }
+  }
+
+  .keyboard-panel { flex: 0 0 auto; padding: 12px 16px 16px; }
+
+  .kb-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 24px;
+  }
+
+  .hint { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: var(--muted); min-width: 0; }
+
+  .finger-dot {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    margin-top: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+
+  #hintText { flex: 1; min-width: 0; line-height: 1.5; }
+  #hintText.error { color: var(--error); }
+
+  .ime-note { flex: 0 0 auto; font-size: 11px; color: var(--muted); opacity: .85; }
+
+  .keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 860px;
+    margin: 10px auto 0;
+  }
+
+  .kb-row { display: flex; gap: 5px; }
+  .kb-row-space { margin-top: 1px; }
+
+  .key {
+    flex: var(--w, 1) 1 0;
+    min-width: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--key-bg);
+    border: 1px solid var(--key-border);
+    border-radius: 7px;
+    box-shadow: var(--key-shadow);
+    color: var(--key-label);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    user-select: none;
+    transition: background .1s, border-color .1s, color .1s;
+  }
+
+  .key.special {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--panel-2);
+    text-transform: none;
+  }
+
+  .key.is-next {
+    background: var(--finger, var(--accent));
+    border-color: var(--finger, var(--accent));
+    color: #fff;
+    box-shadow: 0 6px 14px -8px rgba(0, 0, 0, .55);
+  }
+
+  .key.pressed { background: var(--accent-soft); border-color: var(--accent); }
+
+  .kb-row-space .key.space { flex: 0 0 46%; margin: 0 auto; font-size: 10px; }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(8, 12, 20, .55);
+    backdrop-filter: blur(2px);
+  }
+
+  .overlay.hidden { display: none; }
+
+  .modal {
+    width: 100%;
+    max-width: 430px;
+    padding: 26px 28px 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .45);
+    animation: pop .18s ease;
+  }
+
+  @keyframes pop {
+    from { transform: scale(.96); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal h2 { margin: 0 0 14px; font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; }
+
+  .result-wpm { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+  .result-wpm b { font-size: 50px; line-height: 1; letter-spacing: -1px; }
+  .result-wpm span { font-size: 13px; color: var(--muted); }
+
+  .record { margin: 8px 0 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--correct); }
+  .record.muted { color: var(--muted); font-weight: 500; }
+  .record.hidden { display: none; }
+
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
+
+  .result-grid > div {
+    padding: 10px;
+    text-align: center;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .result-grid span { font-size: 11px; color: var(--muted); }
+  .result-grid b { font-size: 17px; }
+
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+  #importOverlay { z-index: 60; }
+  .import-modal { max-width: 580px; }
+  .import-modal h2 { margin-bottom: 10px; }
+
+  .import-note {
+    margin: 0 0 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .import-text {
+    width: 100%;
+    height: 200px;
+    resize: vertical;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-2);
+    color: var(--text);
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    outline: none;
+  }
+
+  .import-text:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47, 109, 246, .15); }
+
+  .import-meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    min-height: 18px;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  .import-error { color: var(--error); line-height: 1.5; }
+  .import-error.hidden { display: none; }
+  #importCount { flex: 0 0 auto; margin-left: auto; white-space: nowrap; }
+  #importCount.over { color: var(--error); }
+  .import-modal .modal-actions { margin-top: 14px; }
+
+  @media (max-height: 720px) and (min-width: 981px) {
+    .main { padding: 12px 20px 14px; gap: 10px; }
+    .stats-bar { padding: 10px 18px 8px; }
+    .stat-value b { font-size: 20px; }
+    .progress-row { margin-top: 7px; }
+    .panel-head { padding: 10px 16px 8px; }
+    .text-area { font-size: 18px; line-height: 1.9; padding: 12px 18px 16px; }
+    .keyboard-panel { padding: 10px 14px 12px; }
+    .keyboard { margin-top: 7px; gap: 4px; }
+    .kb-row { gap: 4px; }
+    .key { height: 34px; font-size: 11.5px; }
+    .key.special { font-size: 9.5px; }
+  }
+
+  @media (max-width: 980px) {
+    .app { height: auto; }
+    .layout { grid-template-columns: 1fr; height: auto; }
+    .sidebar { height: auto; max-height: 300px; border-right: none; border-bottom: 1px solid var(--line); }
+    .main { height: auto; padding: 16px; }
+    .text-panel { min-height: 280px; }
+    .text-area { max-height: 50vh; }
+    .key { height: 34px; font-size: 10.5px; }
+    .stats { gap: 6px; }
+    .stat + .stat { padding-left: 10px; }
+    .stat-value b { font-size: 20px; }
+  }
+
+  @media (max-width: 560px) {
+    .brand p { display: none; }
+    .text-area { font-size: 17px; }
+    .ime-note { display: none; }
+    .key { height: 28px; border-radius: 5px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">T</div>
+      <div>
+        <h1>TYPES</h1>
+        <p>电脑新手打字练习</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="soundBtn" title="按键音效" aria-label="切换按键音效"></button>
+      <button class="icon-btn" id="themeBtn" title="切换主题" aria-label="切换深色/浅色主题"></button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav id="nav"></nav>
+      <section class="nav-section">
+        <h3 class="section-title">最近成绩</h3>
+        <div class="history" id="history"></div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <section class="stats-bar panel">
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">速度</span>
+            <span class="stat-value"><b id="wpm">0</b><i>WPM</i></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">准确率</span>
+            <span class="stat-value"><b id="accuracy">100</b><i>%</i></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">错误次数</span>
+            <span class="stat-value"><b id="errors">0</b><i>次</i></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">用时</span>
+            <span class="stat-value"><b id="time">0:00</b></span>
+          </div>
+        </div>
+        <div class="progress-row">
+          <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+          <span class="progress-text" id="progressText">0%</span>
+        </div>
+      </section>
+
+      <section class="text-panel panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="contentTitle">新手教程</h2>
+            <p id="contentTip"></p>
+          </div>
+          <button class="ghost-btn" id="restartBtn">重新开始</button>
+        </div>
+        <div class="text-area" id="textArea"></div>
+      </section>
+
+      <section class="keyboard-panel panel">
+        <div class="kb-head">
+          <div class="hint">
+            <span class="finger-dot" id="fingerDot"></span>
+            <span id="hintText">准备开始</span>
+          </div>
+          <span class="ime-note">请切换到英文输入法</span>
+        </div>
+        <div class="keyboard" id="keyboard"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlay">
+  <div class="modal">
+    <h2 id="resultTitle">练习完成</h2>
+    <div class="result-wpm"><b id="rWpm">0</b><span>WPM</span></div>
+    <p class="record" id="rRecord"></p>
+    <div class="result-grid">
+      <div><span>准确率</span><b id="rAcc">0%</b></div>
+      <div><span>错误次数</span><b id="rErrors">0</b></div>
+      <div><span>用时</span><b id="rTime">0:00</b></div>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="closeBtn">关闭</button>
+      <button class="ghost-btn" id="againBtn">再来一次</button>
+      <button class="primary-btn" id="nextBtn">下一课</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="importOverlay">
+  <div class="modal import-modal">
+    <h2>自由练习</h2>
+    <p class="import-note">粘贴或输入要练习的内容，支持英文、数字、英文符号与换行，暂不支持中文。按 Enter 换行，Ctrl + Enter 开始。</p>
+    <textarea class="import-text" id="importText" spellcheck="false" aria-label="练习内容" placeholder="在这里粘贴文章、单词或代码…"></textarea>
+    <div class="import-meta">
+      <span class="import-error hidden" id="importError"></span>
+      <span id="importCount">0 / 4000 字符</span>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="importCancel">取消</button>
+      <button class="primary-btn" id="importStart">开始练习</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const $ = function (id) { return document.getElementById(id); };
+  const LS = 'types.v1.';
+
+  function loadJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(LS + key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) { return fallback; }
+  }
+  function saveJSON(key, value) {
+    try { localStorage.setItem(LS + key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  const FINGERS = {
+    lp: { name: '左手小指', color: '#f59e0b' },
+    lr: { name: '左手无名指', color: '#10b981' },
+    lm: { name: '左手中指', color: '#3b82f6' },
+    li: { name: '左手食指', color: '#8b5cf6' },
+    ri: { name: '右手食指', color: '#ec4899' },
+    rm: { name: '右手中指', color: '#06b6d4' },
+    rr: { name: '右手无名指', color: '#84cc16' },
+    rp: { name: '右手小指', color: '#f97316' },
+    th: { name: '拇指', color: '#64748b' }
+  };
+
+  const FINGER_MAP = new Map();
+  function mapFinger(chars, key) {
+    for (const c of chars) FINGER_MAP.set(c, FINGERS[key]);
+  }
+  mapFinger('`1qaz', 'lp');
+  mapFinger('2wsx', 'lr');
+  mapFinger('3edc', 'lm');
+  mapFinger('45rtfgvb', 'li');
+  mapFinger('67yuhjnm', 'ri');
+  mapFinger('8ik,', 'rm');
+  mapFinger('9ol.', 'rr');
+  mapFinger("0-=[]\\;'/p", 'rp');
+  mapFinger(' ', 'th');
+
+  const LEFT_HAND = new Set('`12345qwertasdfgzxcvb');
+  const SHIFT_MAP = {
+    '~': '`', '!': '1', '@': '2', '#': '3', '$': '4', '%': '5', '^': '6',
+    '&': '7', '*': '8', '(': '9', ')': '0', '_': '-', '+': '=', '{': '[',
+    '}': ']', '|': '\\', ':': ';', '"': "'", '<': ',', '>': '.', '?': '/'
+  };
+
+  function baseOf(ch) {
+    if (SHIFT_MAP[ch]) return SHIFT_MAP[ch];
+    if (ch >= 'A' && ch <= 'Z') return ch.toLowerCase();
+    return ch;
+  }
+
+  function describeChar(ch) {
+    if (ch === '\n') return ' Enter ';
+    if (ch === ' ') return ' 空格 ';
+    return '「' + ch + '」';
+  }
+
+  function drill(keys) {
+    const groups = [];
+    for (let i = 0; i < 18; i++) {
+      let g = '';
+      for (let j = 0; j < 3; j++) g += keys[Math.floor(Math.random() * keys.length)];
+      groups.push(g);
+    }
+    return groups.join(' ');
+  }
+
+  function drillShift() {
+    const base = ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
+    const groups = [];
+    for (let i = 0; i < 18; i++) {
+      let g = '';
+      for (let j = 0; j < 3; j++) {
+        const c = base[Math.floor(Math.random() * base.length)];
+        g += (j === 0 || Math.random() < 0.5) ? c.toUpperCase() : c;
+      }
+      groups.push(g);
+    }
+    return groups.join(' ');
+  }
+
+  function drillNumbers() {
+    const d = '1234567890';
+    const groups = [];
+    for (let i = 0; i < 15; i++) {
+      const s = Math.floor(Math.random() * 8);
+      groups.push(d[s] + d[s + 1] + d[(s + 2) % 10]);
+    }
+    return groups.join(' ');
+  }
+
+  const WORDS = 'the and you that was for are with his they this have from one had word but not what all were when your can said there use each which she how their will other about out many then them these some her would make like';
+  const PHRASES = 'good morning, how are you? i am fine, thank you. practice makes perfect. see you later.';
+
+  const LESSONS = [
+    { id: 'l01', title: '基准键位 · F J', tip: '左手食指放在 F 键、右手食指放在 J 键，这两个键上都有小凸点', gen: () => drill(['f', 'f', 'j', 'j']) },
+    { id: 'l02', title: '基准键位 · D K', tip: '左手中指按 D，右手中指按 K，食指保持在 F、J 上', gen: () => drill(['d', 'd', 'k', 'k', 'f', 'j']) },
+    { id: 'l03', title: '基准键位 · S L', tip: '左手无名指按 S，右手无名指按 L', gen: () => drill(['s', 's', 'l', 'l', 'd', 'k']) },
+    { id: 'l04', title: '基准键位 · A ;', tip: '左手小指按 A，右手小指按分号键 ;', gen: () => drill(['a', 'a', ';', ';', 's', 'l']) },
+    { id: 'l05', title: '基准键位 · 综合', tip: '八个基准键交替练习，每次按完都回到基准位置', gen: () => drill(['a', 's', 'd', 'f', 'j', 'k', 'l', ';']) },
+    { id: 'l06', title: '上排 · E I', tip: '左手中指上移按 E，右手中指上移按 I', gen: () => drill(['e', 'e', 'i', 'i', 'd', 'k']) },
+    { id: 'l07', title: '上排 · R T U Y', tip: '左手食指按 R、T，右手食指按 Y、U', gen: () => drill(['r', 'r', 't', 't', 'u', 'u', 'y', 'y', 'f', 'j']) },
+    { id: 'l08', title: '上排 · Q W O P', tip: '左手小指按 Q、无名指按 W，右手无名指按 O、小指按 P', gen: () => drill(['w', 'w', 'o', 'o', 'q', 'q', 'p', 'p']) },
+    { id: 'l09', title: '下排 · V N C M', tip: '左手食指下移按 V、B，右手食指下移按 N、M', gen: () => drill(['v', 'v', 'n', 'n', 'c', 'c', 'm', 'm', 'f', 'j']) },
+    { id: 'l10', title: '下排 · X Z , . /', tip: '左手无名指按 X、小指按 Z；右手依次用中指、无名指、小指按逗号、句号、斜杠', gen: () => drill(['x', 'x', 'z', 'z', ',', ',', '.', '.', '/', '/']) },
+    { id: 'l11', title: '大写字母 · Shift', tip: '按住与字母相反一侧的 Shift 键再按字母；若一直是大写，请检查 Caps Lock', gen: drillShift },
+    { id: 'l12', title: '数字键 · 1 到 0', tip: '手指从基准行向上伸出，用对应手指按数字键，按完回到基准位置', gen: drillNumbers },
+    { id: 'l13', title: '常见英文单词', tip: '高频英文单词，注意单词之间的空格', gen: () => WORDS },
+    { id: 'l14', title: '简单英文短语', tip: '简单短语与标点，标点前不要留空格', gen: () => PHRASES }
+  ];
+
+  const ARTICLES = [
+    {
+      id: 'a1',
+      title: '关于电脑',
+      text: 'A computer is a tool that helps us every day. It can write letters, draw pictures, and play music. The keyboard is the part you use most. Each key sends a signal to the computer. When you press a key, a letter appears on the screen. With a little practice, your fingers will find the keys without looking.'
+    },
+    {
+      id: 'a2',
+      title: '早晨练习',
+      text: 'The morning is a good time to practice. Sit up straight and put your feet flat on the floor. Rest your fingers on the home row. Look at the screen, not at your hands. Type slowly and keep your eyes on the text. Speed comes later, so focus on being correct.'
+    },
+    {
+      id: 'a3',
+      title: '互联网',
+      text: 'The internet connects computers around the world. People use it to read news, send mail, and talk with friends. To use the internet, open a browser and type a web address. Always keep your password safe and never share it with others.'
+    },
+    {
+      id: 'a4',
+      title: '学习新技能',
+      text: 'Learning anything new takes time. At first, your fingers may feel slow and clumsy. That is normal. Practice a little every day, even for ten minutes. Small steps add up. Soon you will type without thinking about each key.'
+    }
+  ];
+
+  const CODES = [
+    {
+      id: 'c1',
+      title: 'JavaScript · 问好',
+      text: [
+        'let name = "TYPES";',
+        'console.log("Hello, " + name);',
+        '',
+        'for (let i = 1; i <= 3; i++) {',
+        '  console.log(i * 2);',
+        '}'
+      ].join('\n')
+    },
+    {
+      id: 'c2',
+      title: 'Python · 循环',
+      text: [
+        'name = "TYPES"',
+        'print("Hello, " + name)',
+        '',
+        'for i in range(1, 4):',
+        '  print(i * 2)'
+      ].join('\n')
+    },
+    {
+      id: 'c3',
+      title: 'HTML · 标题',
+      text: [
+        '<h1>Hello</h1>',
+        '<p>I am learning to type.</p>',
+        '',
+        '<button>Start</button>'
+      ].join('\n')
+    }
+  ];
+
+  const SECTIONS = [
+    { label: '新手教程', kind: 'lesson', items: LESSONS },
+    { label: '英文文章', kind: 'article', items: ARTICLES },
+    { label: '简单代码', kind: 'code', items: CODES }
+  ];
+
+  const state = {
+    content: null,
+    text: '',
+    spans: [],
+    index: 0,
+    correctChars: 0,
+    correctKeys: 0,
+    errorKeys: 0,
+    started: false,
+    startTime: 0,
+    finalElapsed: 0,
+    timer: null,
+    finished: false,
+    modalOpen: false,
+    importOpen: false,
+    nextItem: null,
+    best: loadJSON('best', {}),
+    history: loadJSON('history', []),
+    settings: Object.assign({ sound: true, theme: 'light' }, loadJSON('settings', {}))
+  };
+
+  const keyByChar = new Map();
+  const shiftKeys = { left: null, right: null };
+  let enterKey = null;
+
+  const KB_ROWS = [
+    { keys: ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='], end: { label: 'Backspace', special: 'Backspace', w: 2 } },
+    { start: { label: 'Tab', special: 'Tab', w: 1.5 }, keys: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']'], end: { label: '\\', base: '\\', w: 1.5 } },
+    { start: { label: 'Caps', special: 'Caps', w: 1.75 }, keys: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'"], end: { label: 'Enter', special: 'Enter', w: 2.25 } },
+    { start: { label: 'Shift', special: 'Shift', side: 'left', w: 2.25 }, keys: ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'], end: { label: 'Shift', special: 'Shift', side: 'right', w: 2.25 } },
+    { space: true }
+  ];
+
+  function makeKey(k) {
+    const el = document.createElement('div');
+    el.className = 'key' + (k.special ? ' special' : '') + (k.cls ? ' ' + k.cls : '');
+    el.textContent = k.label;
+    if (k.w) el.style.setProperty('--w', k.w);
+    if (k.base !== undefined) {
+      el.dataset.base = k.base;
+      keyByChar.set(k.base, el);
+    }
+    if (k.special === 'Shift') {
+      el.dataset.side = k.side;
+      shiftKeys[k.side] = el;
+    }
+    if (k.special === 'Enter') enterKey = el;
+    return el;
+  }
+
+  function buildKeyboard() {
+    const wrap = $('keyboard');
+    wrap.innerHTML = '';
+    KB_ROWS.forEach(function (row) {
+      const rowEl = document.createElement('div');
+      rowEl.className = 'kb-row';
+      if (row.start) rowEl.appendChild(makeKey(row.start));
+      (row.keys || []).forEach(function (ch) {
+        rowEl.appendChild(makeKey({ label: ch, base: ch }));
+      });
+      if (row.end) rowEl.appendChild(makeKey(row.end));
+      if (row.space) {
+        rowEl.classList.add('kb-row-space');
+        rowEl.appendChild(makeKey({ label: 'Space', base: ' ', w: 8, cls: 'space' }));
+      }
+      wrap.appendChild(rowEl);
+    });
+  }
+
+  function renderNavigation() {
+    const nav = $('nav');
+    let html = '<div class="nav-section"><h3 class="section-title">自由练习</h3>' +
+      '<button class="nav-item" data-kind="free" data-id="custom">' +
+      '<span class="nav-title">＋ 粘贴内容练习</span>' +
+      '<span class="nav-best"></span>' +
+      '</button></div>';
+    SECTIONS.forEach(function (section) {
+      html += '<div class="nav-section"><h3 class="section-title">' + section.label + '</h3>';
+      section.items.forEach(function (item) {
+        html += '<button class="nav-item" data-kind="' + section.kind + '" data-id="' + item.id + '">' +
+          '<span class="nav-title">' + item.title + '</span>' +
+          '<span class="nav-best"></span>' +
+          '</button>';
+      });
+      html += '</div>';
+    });
+    nav.innerHTML = html;
+    nav.addEventListener('click', function (e) {
+      const btn = e.target.closest('.nav-item');
+      if (!btn) return;
+      if (btn.dataset.kind === 'free') openImport();
+      else setContent(btn.dataset.kind, btn.dataset.id);
+    });
+    refreshBestBadges();
+  }
+
+  function refreshBestBadges() {
+    document.querySelectorAll('.nav-item').forEach(function (btn) {
+      const record = state.best[btn.dataset.kind + ':' + btn.dataset.id];
+      const badge = btn.querySelector('.nav-best');
+      if (badge) badge.textContent = record ? '最佳 ' + record.wpm : '';
+    });
+  }
+
+  function markActive(kind, id) {
+    document.querySelectorAll('.nav-item').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.kind === kind && btn.dataset.id === id);
+    });
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+
+  function renderHistory() {
+    const box = $('history');
+    if (!state.history.length) {
+      box.innerHTML = '<div class="history-empty">完成练习后，成绩会显示在这里。</div>';
+      return;
+    }
+    box.innerHTML = state.history.slice(0, 8).map(function (h) {
+      return '<div class="history-item">' +
+        '<div class="h-title">' + h.title + '</div>' +
+        '<div class="h-meta">' + h.wpm + ' WPM · ' + h.accuracy + '% · ' + fmtDate(h.date) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function formatTime(sec) {
+    const s = Math.max(0, Math.floor(sec));
+    return Math.floor(s / 60) + ':' + pad2(s % 60);
+  }
+
+  function computeWpm() {
+    if (!state.started) return 0;
+    const seconds = state.finished ? state.finalElapsed : (performance.now() - state.startTime) / 1000;
+    if (seconds <= 0) return 0;
+    return Math.round((state.correctChars / 5) / (seconds / 60));
+  }
+
+  function currentAccuracy() {
+    const total = state.correctKeys + state.errorKeys;
+    return total ? Math.round((state.correctKeys / total) * 100) : 100;
+  }
+
+  function updateStats() {
+    $('wpm').textContent = computeWpm();
+    $('accuracy').textContent = currentAccuracy();
+    $('errors').textContent = state.errorKeys;
+    const seconds = state.started ? (state.finished ? state.finalElapsed : (performance.now() - state.startTime) / 1000) : 0;
+    $('time').textContent = formatTime(seconds);
+    const total = state.text.length || 1;
+    const progress = Math.round((state.index / total) * 100);
+    $('progressFill').style.width = progress + '%';
+    $('progressText').textContent = progress + '%';
+  }
+
+  function getKeyInfo(ch) {
+    if (ch === '\n') {
+      return { special: 'Enter', base: null, label: 'Enter', finger: FINGERS.rp, needShift: false, shiftSide: null };
+    }
+    const base = baseOf(ch);
+    const finger = FINGER_MAP.get(base) || FINGERS.rp;
+    const needShift = ch !== base;
+    const label = ch === ' ' ? '空格' : base.toUpperCase();
+    const shiftSide = needShift ? (LEFT_HAND.has(base) ? 'right' : 'left') : null;
+    return { special: null, base: base, label: label, finger: finger, needShift: needShift, shiftSide: shiftSide };
+  }
+
+  function clearHighlights() {
+    keyByChar.forEach(function (el) { el.classList.remove('is-next'); });
+    if (shiftKeys.left) shiftKeys.left.classList.remove('is-next');
+    if (shiftKeys.right) shiftKeys.right.classList.remove('is-next');
+    if (enterKey) enterKey.classList.remove('is-next');
+  }
+
+  function highlightInfo(info) {
+    clearHighlights();
+    if (!info) return;
+    if (info.special === 'Enter') {
+      if (enterKey) {
+        enterKey.classList.add('is-next');
+        enterKey.style.setProperty('--finger', info.finger.color);
+      }
+      return;
+    }
+    const el = keyByChar.get(info.base);
+    if (el) {
+      el.classList.add('is-next');
+      el.style.setProperty('--finger', info.finger.color);
+    }
+    if (info.needShift) {
+      const shiftEl = shiftKeys[info.shiftSide];
+      if (shiftEl) {
+        shiftEl.classList.add('is-next');
+        shiftEl.style.setProperty('--finger', info.shiftSide === 'left' ? FINGERS.lp.color : FINGERS.rp.color);
+      }
+    }
+  }
+
+  function updateHint(message) {
+    const hintEl = $('hintText');
+    const dot = $('fingerDot');
+    if (state.finished || !state.text.length) {
+      clearHighlights();
+      dot.style.visibility = 'hidden';
+      hintEl.classList.remove('error');
+      hintEl.textContent = state.finished ? '本段已完成 — 点击「重新开始」或选择其他内容' : '准备开始';
+      return;
+    }
+    const ch = state.text[state.index];
+    const info = getKeyInfo(ch);
+    highlightInfo(info);
+    dot.style.visibility = 'visible';
+    dot.style.background = info.finger.color;
+    if (message) {
+      hintEl.classList.add('error');
+      hintEl.textContent = message;
+    } else {
+      hintEl.classList.remove('error');
+      let text;
+      if (info.special === 'Enter') text = 'Enter — 右手小指';
+      else if (info.needShift) text = 'Shift + ' + info.label + ' — ' + info.finger.name;
+      else text = info.label + ' — ' + info.finger.name;
+      hintEl.textContent = text;
+    }
+  }
+
+  function scrollToCurrent() {
+    const el = state.spans[state.index];
+    if (!el) return;
+    const area = $('textArea');
+    const top = el.offsetTop;
+    const height = el.offsetHeight || 24;
+    if (top < area.scrollTop + 8 || top + height > area.scrollTop + area.clientHeight - 18) {
+      area.scrollTo({ top: Math.max(0, top - area.clientHeight * 0.35), behavior: 'smooth' });
+    }
+  }
+
+  function renderText() {
+    const area = $('textArea');
+    area.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    const spans = [];
+    for (let i = 0; i < state.text.length; i++) {
+      const ch = state.text[i];
+      const span = document.createElement('span');
+      span.className = 'char';
+      if (ch === '\n') {
+        span.classList.add('nl');
+        span.textContent = '↵';
+        span.title = '按 Enter 换行';
+      } else if (ch === ' ') {
+        span.classList.add('space');
+        span.textContent = ' ';
+      } else {
+        span.textContent = ch;
+      }
+      frag.appendChild(span);
+      spans.push(span);
+      if (ch === '\n') frag.appendChild(document.createElement('br'));
+    }
+    area.appendChild(frag);
+    state.spans = spans;
+    area.scrollTop = 0;
+    if (spans.length) spans[0].classList.add('current');
+  }
+
+  function resetSession() {
+    if (state.timer) {
+      clearInterval(state.timer);
+      state.timer = null;
+    }
+    state.index = 0;
+    state.correctChars = 0;
+    state.correctKeys = 0;
+    state.errorKeys = 0;
+    state.started = false;
+    state.startTime = 0;
+    state.finalElapsed = 0;
+    state.finished = false;
+    updateStats();
+  }
+
+  function findDef(kind, id) {
+    const list = kind === 'lesson' ? LESSONS : kind === 'article' ? ARTICLES : CODES;
+    return list.find(function (item) { return item.id === id; });
+  }
+
+  function setContent(kind, id) {
+    const def = findDef(kind, id);
+    if (!def) return;
+    let text, tip;
+    if (kind === 'lesson') {
+      text = def.gen();
+      tip = def.tip;
+    } else if (kind === 'article') {
+      text = def.text;
+      tip = '英文短文 · 注意大小写与标点，用空格键分隔单词';
+    } else {
+      text = def.text;
+      tip = '简单代码 · 注意符号与缩进，按 Enter 键换行';
+    }
+    state.content = { kind: kind, id: id, title: def.title };
+    state.text = text;
+    resetSession();
+    $('contentTitle').textContent = def.title;
+    $('contentTip').textContent = tip;
+    renderText();
+    markActive(kind, id);
+    closeModal(true);
+    updateHint();
+    $('textArea').scrollTop = 0;
+  }
+
+  function loadCustom(text) {
+    state.content = { kind: 'free', id: 'custom', title: '自由练习 · ' + text.length + ' 字符' };
+    state.text = text;
+    resetSession();
+    $('contentTitle').textContent = '自由练习';
+    $('contentTip').textContent = '自定义内容 · 共 ' + text.length + ' 个字符 · 按 Enter 换行';
+    renderText();
+    markActive('free', 'custom');
+    closeModal(true);
+    updateHint();
+    $('textArea').scrollTop = 0;
+  }
+
+  function restartCurrent() {
+    if (!state.content) return;
+    closeModal(true);
+    if (state.content.kind === 'free') {
+      resetSession();
+      renderText();
+      updateHint();
+      $('textArea').scrollTop = 0;
+    } else {
+      setContent(state.content.kind, state.content.id);
+    }
+  }
+
+  function normalizeImport(raw) {
+    return raw
+      .replace(/\r\n?/g, '\n')
+      .replace(/\t/g, '  ')
+      .replace(/\u00A0/g, ' ')
+      .replace(/^\n+/, '')
+      .replace(/[ \n]+$/, '');
+  }
+
+  function updateImportCount() {
+    const length = normalizeImport($('importText').value).length;
+    const countEl = $('importCount');
+    countEl.textContent = length + ' / 4000 字符';
+    countEl.classList.toggle('over', length > 4000);
+  }
+
+  function showImportError(message) {
+    const el = $('importError');
+    el.textContent = message;
+    el.classList.remove('hidden');
+    $('importText').focus();
+  }
+
+  function openImport() {
+    state.importOpen = true;
+    $('importError').classList.add('hidden');
+    $('importOverlay').classList.remove('hidden');
+    updateImportCount();
+    setTimeout(function () { $('importText').focus(); }, 20);
+  }
+
+  function closeImport() {
+    state.importOpen = false;
+    $('importOverlay').classList.add('hidden');
+    $('importText').blur();
+  }
+
+  function startFreePractice() {
+    const text = normalizeImport($('importText').value);
+    if (!text) {
+      showImportError('请先粘贴或输入要练习的内容。');
+      return;
+    }
+    if (text.length > 4000) {
+      showImportError('内容过长，请控制在 4000 个字符以内（当前 ' + text.length + ' 个）。');
+      return;
+    }
+    const bad = text.match(/[^\x20-\x7E\n]/u);
+    if (bad) {
+      showImportError('包含不支持的字符「' + bad[0] + '」，目前仅支持英文、数字和英文符号。');
+      return;
+    }
+    closeImport();
+    loadCustom(text);
+  }
+
+  function startSession() {
+    state.started = true;
+    state.startTime = performance.now();
+    state.timer = setInterval(function () {
+      if (!state.finished) updateStats();
+    }, 200);
+    updateStats();
+  }
+
+  function handleCorrect() {
+    const span = state.spans[state.index];
+    if (!span) return;
+    span.classList.remove('wrong', 'current');
+    span.classList.add('correct');
+    state.correctKeys++;
+    state.correctChars++;
+    state.index++;
+    if (state.index < state.text.length) {
+      state.spans[state.index].classList.add('current');
+      scrollToCurrent();
+    }
+    playTone(1200, 0.025, 'sine', 0.018);
+    updateStats();
+    if (state.index >= state.text.length) finishSession();
+    else updateHint();
+  }
+
+  function handleWrong(expected, pressed) {
+    const span = state.spans[state.index];
+    if (!span) return;
+    span.classList.remove('wrong');
+    void span.offsetWidth;
+    span.classList.add('wrong');
+    state.errorKeys++;
+    playTone(200, 0.09, 'triangle', 0.05);
+    playTone(140, 0.1, 'triangle', 0.03, 0.04);
+    updateStats();
+    const info = getKeyInfo(expected);
+    updateHint('按错了：你按了' + describeChar(pressed) + '，应为' + describeChar(expected) + '（' + info.finger.name + '）');
+  }
+
+  function finishSession() {
+    state.finished = true;
+    state.finalElapsed = state.started ? (performance.now() - state.startTime) / 1000 : 0;
+    if (state.timer) {
+      clearInterval(state.timer);
+      state.timer = null;
+    }
+    updateStats();
+    updateHint();
+    const wpm = computeWpm();
+    const accuracy = currentAccuracy();
+    const errors = state.errorKeys;
+    const seconds = Math.round(state.finalElapsed);
+    const result = saveResult(wpm, accuracy, errors, seconds);
+    showResult(wpm, accuracy, errors, seconds, result);
+    playTone(660, 0.12, 'sine', 0.05);
+    playTone(880, 0.12, 'sine', 0.05, 0.09);
+    playTone(1046, 0.2, 'sine', 0.05, 0.18);
+  }
+
+  function saveResult(wpm, accuracy, errors, seconds) {
+    const isFree = state.content.kind === 'free';
+    let isRecord = false;
+    let prevWpm = null;
+    if (!isFree) {
+      const key = state.content.kind + ':' + state.content.id;
+      const prev = state.best[key];
+      isRecord = !prev || wpm > prev.wpm;
+      prevWpm = prev ? prev.wpm : null;
+      if (isRecord) {
+        state.best[key] = { wpm: wpm, accuracy: accuracy, errors: errors, time: seconds, date: new Date().toISOString() };
+        saveJSON('best', state.best);
+        refreshBestBadges();
+      }
+    }
+    state.history.unshift({
+      title: state.content.title,
+      wpm: wpm,
+      accuracy: accuracy,
+      errors: errors,
+      time: seconds,
+      date: new Date().toISOString()
+    });
+    if (state.history.length > 30) state.history.length = 30;
+    saveJSON('history', state.history);
+    renderHistory();
+    return { isRecord: isRecord, prevWpm: prevWpm, isFree: isFree };
+  }
+
+  function findNext() {
+    const kind = state.content.kind;
+    if (kind === 'free') return null;
+    const list = kind === 'lesson' ? LESSONS : kind === 'article' ? ARTICLES : CODES;
+    const idx = list.findIndex(function (item) { return item.id === state.content.id; });
+    if (idx >= 0 && idx + 1 < list.length) return { kind: kind, id: list[idx + 1].id };
+    return null;
+  }
+
+  function showResult(wpm, accuracy, errors, seconds, result) {
+    $('resultTitle').textContent = '完成 · ' + state.content.title;
+    $('rWpm').textContent = wpm;
+    $('rAcc').textContent = accuracy + '%';
+    $('rErrors').textContent = errors;
+    $('rTime').textContent = formatTime(seconds);
+    const recordEl = $('rRecord');
+    recordEl.classList.remove('hidden');
+    if (result.isFree) {
+      recordEl.className = 'record muted';
+      recordEl.textContent = '成绩已记录到「最近成绩」';
+    } else if (result.isRecord) {
+      recordEl.className = 'record';
+      recordEl.textContent = '新纪录！';
+    } else {
+      recordEl.className = 'record muted';
+      recordEl.textContent = '本课最佳：' + result.prevWpm + ' WPM';
+    }
+    state.nextItem = findNext();
+    const nextBtn = $('nextBtn');
+    if (state.nextItem) {
+      nextBtn.style.display = '';
+      nextBtn.textContent = state.content.kind === 'lesson' ? '下一课' : state.content.kind === 'article' ? '下一篇' : '下一段';
+    } else {
+      nextBtn.style.display = 'none';
+    }
+    $('overlay').classList.remove('hidden');
+    state.modalOpen = true;
+  }
+
+  function closeModal(force) {
+    $('overlay').classList.add('hidden');
+    state.modalOpen = false;
+    if (!force && state.finished) updateHint();
+  }
+
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { audioCtx = new AC(); } catch (e) { return null; }
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playTone(freq, duration, type, volume, delay) {
+    if (!state.settings.sound) return;
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const t0 = ctx.currentTime + (delay || 0);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(volume || 0.03, t0);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.03);
+  }
+
+  function flashKey(ch) {
+    let el = null;
+    if (ch === '\n') el = enterKey;
+    else el = keyByChar.get(baseOf(ch));
+    if (!el) return;
+    el.classList.add('pressed');
+    setTimeout(function () { el.classList.remove('pressed'); }, 110);
+  }
+
+  function handleKeyDown(e) {
+    if (state.importOpen) {
+      if (e.key === 'Escape') closeImport();
+      return;
+    }
+    if (state.modalOpen) {
+      if (e.key === 'Escape') closeModal();
+      return;
+    }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.isComposing || e.key === 'Process' || e.repeat) return;
+    const expected = state.text[state.index];
+    if (expected === undefined) return;
+
+    let pressed = null;
+    if (e.key === 'Enter') {
+      pressed = '\n';
+    } else if (e.key === 'Tab' || e.key === 'Backspace' || e.key === 'Delete' || e.key === 'Escape' || e.key.indexOf('Arrow') === 0) {
+      e.preventDefault();
+      return;
+    } else if (e.key.length === 1) {
+      pressed = e.key;
+    } else {
+      return;
+    }
+
+    e.preventDefault();
+    if (pressed === '\n' && expected !== '\n') return;
+    flashKey(pressed);
+    if (!state.started) startSession();
+    if (state.finished) return;
+    if (pressed === expected) handleCorrect();
+    else handleWrong(expected, pressed);
+  }
+
+  function applyTheme() {
+    document.documentElement.dataset.theme = state.settings.theme;
+    $('themeBtn').innerHTML = state.settings.theme === 'dark'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+    $('themeBtn').title = state.settings.theme === 'dark' ? '切换到浅色主题' : '切换到深色主题';
+  }
+
+  function applySoundIcon() {
+    $('soundBtn').innerHTML = state.settings.sound
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M4 4l16 16"/></svg>';
+    $('soundBtn').title = state.settings.sound ? '关闭按键音效' : '开启按键音效';
+  }
+
+  $('soundBtn').addEventListener('click', function () {
+    state.settings.sound = !state.settings.sound;
+    saveJSON('settings', state.settings);
+    applySoundIcon();
+    if (state.settings.sound) playTone(880, 0.08, 'sine', 0.04);
+  });
+
+  $('themeBtn').addEventListener('click', function () {
+    state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
+    saveJSON('settings', state.settings);
+    applyTheme();
+  });
+
+  $('restartBtn').addEventListener('click', restartCurrent);
+
+  $('closeBtn').addEventListener('click', function () { closeModal(); });
+
+  $('againBtn').addEventListener('click', restartCurrent);
+
+  $('nextBtn').addEventListener('click', function () {
+    const next = state.nextItem;
+    closeModal(true);
+    if (next) setContent(next.kind, next.id);
+  });
+
+  $('overlay').addEventListener('click', function (e) {
+    if (e.target === $('overlay')) closeModal();
+  });
+
+  $('importText').addEventListener('input', updateImportCount);
+  $('importText').addEventListener('keydown', function (e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      startFreePractice();
+    }
+  });
+  $('importStart').addEventListener('click', startFreePractice);
+  $('importCancel').addEventListener('click', closeImport);
+  $('importOverlay').addEventListener('click', function (e) {
+    if (e.target === $('importOverlay')) closeImport();
+  });
+
+  document.addEventListener('keydown', handleKeyDown);
+
+  buildKeyboard();
+  renderNavigation();
+  renderHistory();
+  applyTheme();
+  applySoundIcon();
+  setContent('lesson', 'l01');
+})();
+</script>
+</body>
+</html>
